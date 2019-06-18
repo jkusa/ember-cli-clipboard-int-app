@@ -1,32 +1,27 @@
-import { moduleForComponent, test } from 'ember-qunit';
+import { module, test } from 'qunit';
+import { setupRenderingTest } from 'ember-qunit';
+import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
-
 import {
-  triggerError,
-  triggerSuccess
-} from '../../helpers/ember-cli-clipboard';
+  triggerCopyError,
+  triggerCopySuccess
+} from 'ember-cli-clipboard/test-support';
 
-moduleForComponent('copy-n-status', 'Integration | Component | copy n status', {
-  integration: true
-});
+module('Integration | Component | copy n status', function(hooks) {
+  setupRenderingTest(hooks);
 
-test('test helpers', function(assert) {
+  test('test helpers', async function(assert) {
 
-  this.render(hbs`{{copy-n-status}}`);
+    await render(hbs`{{copy-n-status}}`);
 
-  assert.equal(this.$('.status__text').text(),
-    'N/A',
-  'status is initially N/A');
+    assert.dom('.status__text').hasText('N/A', 'status is initially N/A');
 
-  triggerSuccess(this);
+    triggerCopySuccess();
 
-  assert.equal(this.$('.status__text').text(),
-    'Success',
-  'status is initially N/A');
+    assert.dom('.status__text').hasText('Success', 'status is now success');
 
-  triggerError(this);
+    triggerCopyError();
 
-  assert.equal(this.$('.status__text').text(),
-    'Error',
-  'status is initially N/A');
+    assert.dom('.status__text').hasText('Error', 'status is now error');
+  });
 });

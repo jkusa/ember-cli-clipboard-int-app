@@ -1,31 +1,26 @@
-import { test } from 'qunit';
-import moduleForAcceptance from 'ember-cli-clipboard-int-app/tests/helpers/module-for-acceptance';
+import { visit } from '@ember/test-helpers';
+import { module, test } from 'qunit';
+import { setupApplicationTest } from 'ember-qunit';
+import {
+  triggerCopyError,
+  triggerCopySuccess
+} from 'ember-cli-clipboard/test-support';
 
-moduleForAcceptance('Acceptance | app');
+module('Acceptance | app', function(hooks) {
+  setupApplicationTest(hooks);
 
-test('visiting /app', function(assert) {
-  assert.expect(3);
+  test('visiting /app', async function(assert) {
+    assert.expect(3);
 
-  visit('/');
-  andThen(() => {
-    assert.equal(find('.status__text').text(),
-      'N/A',
-    'status is initially N/A');
-  });
+    await visit('/');
+    assert.dom('.status__text').hasText('N/A', 'status is initially N/A');
 
-  triggerCopySuccess();
+    triggerCopySuccess();
 
-  andThen(() => {
-    assert.equal(find('.status__text').text(),
-      'Success',
-    'status is now success');
-  });
+    assert.dom('.status__text').hasText('Success', 'status is now success');
 
-  triggerCopyError();
+    triggerCopyError();
 
-  andThen(() => {
-    assert.equal(find('.status__text').text(),
-      'Error',
-    'status is now error');
+    assert.dom('.status__text').hasText('Error', 'status is now error');
   });
 });
